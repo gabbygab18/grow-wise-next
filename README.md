@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# GrowWise (Next.js)
 
-## Getting Started
+Next.js 16 (App Router) + React 19 + Tailwind 4 port of the Laravel/Inertia GrowWise in `../grow-wise`. Same pages, components, effects, and math. No database.
 
-First, run the development server:
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm test           # loan / capacity math (node:test)
+npm run build && npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Deploy: push to GitHub and import in Vercel (no env vars or database needed).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## How it's put together
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| What | Where |
+|---|---|
+| Routes (server components: read cookie, compute, render) | `app/**/page.jsx` |
+| Form submits (validate, save inputs, redirect) | `app/actions.js` (server actions) |
+| Visitor state (business name + each tool's inputs) | one httpOnly cookie, `lib/session.js` |
+| Money math + capacity assumptions | `lib/loanMath.js` |
+| Quiz questions/answers + 26 debt terms | `lib/content.js` (server-only; answers never reach the browser) |
+| Page UIs, ported from Inertia | `components/pages/**` |
+| Shared UI, charts, try-it widgets, CTA presets | `components/**` |
+| Theme tokens | `app/globals.css` (`@theme`) |
+| Fonts | Satoshi (`app/fonts`, next/font/local) + Poppins (next/font/google) |
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Differences from the Laravel version: businesses and quiz results aren't saved to a database; the business name and inputs live in the visitor's cookie for 30 days.
+# grow-wise-next
