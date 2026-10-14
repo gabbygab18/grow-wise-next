@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // cacheComponents is off on purpose: every page reads the visitor's
+  // GrowWise cookie (business name, tool inputs), so pages render per request.
   turbopack: {
     rules: {
       "*.css": {

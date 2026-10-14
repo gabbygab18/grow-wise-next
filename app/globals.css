@@ -1,26 +1,362 @@
-@import "tailwindcss";
+@import '@boxicons/core/fonts/filled/boxicons-filled.min.css';
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
+/*
+ * GrowWise on a Supabaze-inspired system (Satoshi + Poppins type): white canvas, near-black ink, a grey
+ * hairline ladder, and emerald as the only chromatic event.
+ *
+ *   brand      #3ecf8e  fills only (buttons, dots, chart marks); text on it is ink
+ *   brand-deep #24b47e  pressed fill
+ *   brand-ink  #0f7d52  emerald for TEXT and icons on white (5.2:1); the bright
+ *                       emerald is 2:1 on white and never carries text
+ *   night      #1c1c1c  inverted surfaces (result banner, CTA band)
+ *
+ * Radius rule: buttons and inputs 6px, cards / photos / mockups 12px, big
+ * containers 16px, tags and dots full.
+ */
+/* Satoshi for headings, figures and the wordmark; Poppins for reading, buttons and UI.
+   Both are loaded by next/font in app/layout.jsx, which sets these variables. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --font-sans: var(--font-poppins), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-display: var(--font-satoshi), var(--font-poppins), 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+
+    --color-brand: #3ecf8e;
+    --color-brand-deep: #24b47e;
+    --color-brand-ink: #0f7d52;
+    --color-ink: #171717;
+    --color-ink-2: #212121;
+    --color-muted: #707070;
+    --color-faint: #9a9a9a;
+    --color-canvas-soft: #fafafa;
+    --color-night: #1c1c1c;
+    --color-night-soft: #202020;
+    --color-hairline: #dfdfdf;
+    --color-hairline-strong: #c7c7c7;
+    --color-hairline-cool: #ededed;
+    --color-danger: #c11f1f;
+
+    /* Names the ported ScrollX components ask for. */
+    --color-ring: #171717;
+    --color-border: #dfdfdf;
+    --color-card: #ffffff;
+    --color-card-foreground: #171717;
+    --color-muted-foreground: #707070;
+
+    --radius-pill: 6px;
+    --shadow-card: 0 1px 3px rgb(0 0 0 / 0.06);
+    --shadow-lift: 0 8px 24px rgb(0 0 0 / 0.08);
+    --shadow-deep: 0 16px 48px rgb(0 0 0 / 0.12);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+    html {
+        -webkit-tap-highlight-color: transparent;
+        scroll-behavior: smooth;
+    }
+    body {
+        background: #fff;
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3 {
+        font-family: var(--font-display);
+        font-weight: 500;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        text-wrap: balance;
+    }
+    ::selection {
+        background: var(--color-brand);
+        color: var(--color-ink);
+    }
+    :focus-visible {
+        outline: 2px solid var(--color-ink);
+        outline-offset: 2px;
+    }
+    input, select, textarea {
+        caret-color: var(--color-brand-ink);
+    }
+    a {
+        text-underline-offset: 3px;
+    }
+    * {
+        scrollbar-color: var(--color-hairline-strong) transparent;
+        scrollbar-width: thin;
+    }
+}
+
+@layer components {
+    /* pill-tag-soft */
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        border: 1px solid var(--color-hairline);
+        background: var(--color-canvas-soft);
+        color: var(--color-ink);
+        padding: 2px 10px;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.45;
+    }
+    .eyebrow::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: var(--color-brand);
+    }
+
+    .panel {
+        background: #fff;
+        border: 1px solid var(--color-hairline);
+        border-radius: 12px;
+        box-shadow: var(--shadow-card);
+    }
+
+    .gw-input {
+        width: 100%;
+        height: 42px;
+        border-radius: 6px;
+        border: 1px solid var(--color-hairline);
+        background: #fff;
+        padding: 0 12px;
+        font-size: 15px;
+        color: var(--color-ink);
+        transition: border-color 150ms, box-shadow 150ms;
+    }
+    .gw-input::placeholder {
+        color: var(--color-muted);
+        opacity: 0.85;
+    }
+    .gw-input:hover {
+        border-color: var(--color-hairline-strong);
+    }
+    .gw-input:focus {
+        outline: none;
+        border-color: var(--color-ink);
+        box-shadow: 0 0 0 3px rgb(62 207 142 / 0.35);
+    }
+    .gw-input[aria-invalid='true'] {
+        border-color: var(--color-danger);
+    }
+    select.gw-input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23707070'%3E%3Cpath d='M16.293 9.293 12 13.586 7.707 9.293l-1.414 1.414L12 16.414l5.707-5.707z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 20px;
+        padding-right: 38px;
+    }
+
+    .num {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+/* AnimatedHeading clips each word for the rise-in; keep descenders visible. */
+.sx-word-mask,
+.sx-char-mask {
+    padding-block: 0.08em 0.2em;
+    margin-block: -0.08em -0.2em;
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+.sx-spotlight {
+    padding: 0;
+    gap: 0;
+    border-radius: 12px;
+    border-color: var(--color-hairline);
+    box-shadow: var(--shadow-card);
+}
+.sx-spotlight > [data-slot='card-content'] {
+    padding: 0;
+    height: 100%;
+}
+
+/* Layered button (ScrollX), ported from lct-trading. */
+.sx-layered-circle {
+    position: absolute;
+    left: 50%;
+    bottom: var(--layer-bottom, -8px);
+    width: var(--layer-size, 200px);
+    height: var(--layer-size, 200px);
+    border-radius: 50%;
+    pointer-events: none;
+    transform-origin: 50% var(--layer-origin, 100%);
+    transform: translateX(-50%) scale(0);
+    transition: transform 0.22s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.sx-layered-label {
+    transition: transform 0.22s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.sx-layered-twin {
+    opacity: 0;
+    transform: translateY(var(--layer-enter, 60px));
+    transition: transform 0.22s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.2s ease;
+}
+.sx-layered:hover .sx-layered-circle,
+.sx-layered:focus-visible .sx-layered-circle {
+    transform: translateX(-50%) scale(1.2);
+    transition-duration: 0.34s;
+}
+.sx-layered:hover .sx-layered-label,
+.sx-layered:focus-visible .sx-layered-label {
+    transform: translateY(calc(-1 * var(--layer-shift, 56px)));
+    transition-duration: 0.34s;
+}
+.sx-layered:hover .sx-layered-twin,
+.sx-layered:focus-visible .sx-layered-twin {
+    opacity: 1;
+    transform: none;
+    transition-duration: 0.34s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .sx-layered-circle, .sx-layered-label, .sx-layered-twin { transition: none; }
+    .sx-layered:hover .sx-layered-label, .sx-layered:focus-visible .sx-layered-label { transform: none; }
+}
+
+.sx-stats .sx-stats-value {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--color-ink);
+    letter-spacing: -0.03em;
+}
+.sx-stats .sx-stats-label {
+    font-size: 13px;
+    color: var(--color-muted);
+}
+
+/* d3 chart tooltip: values lead, labels follow. */
+.chart-tip {
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    min-width: 150px;
+    max-width: 240px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--color-hairline);
+    background: #fff;
+    box-shadow: var(--shadow-lift);
+    font-size: 12px;
+    color: var(--color-muted);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 120ms ease;
+}
+.chart-tip-title {
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: var(--color-ink);
+}
+.chart-tip-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.6;
+}
+.chart-tip-row strong {
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+}
+.chart-tip-key {
+    width: 12px;
+    height: 2px;
+    border-radius: 2px;
+}
+.chart-mark {
+    cursor: default;
+    outline: none;
+}
+.chart-mark:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+
+/* Marquee (ported from lct-trading): edge fade, pause on hover, still under reduced motion. */
+@keyframes gw-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+.gw-marquee {
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.gw-marquee-track {
+    animation: gw-marquee 40s linear infinite;
+}
+.gw-marquee:hover .gw-marquee-track {
+    animation-play-state: paused;
+}
+
+/* Intro curtain (ScrollX transition): the night surface with the wordmark. */
+.sx-intro-curtain {
+    background: var(--color-night);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gw-marquee-track { animation: none; }
+}
+
+/* Range slider for the "Try it" widgets: emerald fill up to the thumb (--p). */
+.gw-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(to right, var(--color-brand) var(--p, 0%), var(--color-hairline-cool) var(--p, 0%));
+    cursor: pointer;
+}
+.gw-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid var(--color-ink);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+    transition: transform 150ms var(--ease-out-expo);
+}
+.gw-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid var(--color-ink);
+}
+.gw-range:active::-webkit-slider-thumb {
+    transform: scale(1.15);
+}
+.gw-range:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 6px;
+}
+
+/* Intro curtain: rendered on every Home visit, shown only when the inline
+   first-visit script has set html[data-intro] (see components/pages/Home.jsx). */
+html:not([data-intro]) .sx-intro {
+    display: none;
 }
