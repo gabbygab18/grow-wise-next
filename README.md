@@ -1,5 +1,7 @@
 # GrowWise (Next.js)
 
+Live: https://growwise-next.netlify.app
+
 Next.js 16 (App Router) + React 19 + Tailwind 4 port of the Laravel/Inertia GrowWise in `../grow-wise`. Same pages, components, effects, and math. No database.
 
 ## Run
@@ -11,7 +13,7 @@ npm test           # loan / capacity math (node:test)
 npm run build && npm start
 ```
 
-Deploy: push to GitHub and import in Vercel (no env vars or database needed).
+Deploy: push to GitHub; Netlify builds it via `netlify.toml` (no env vars or database needed).
 
 ## How it's put together
 
